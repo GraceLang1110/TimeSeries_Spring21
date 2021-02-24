@@ -1,0 +1,126 @@
+---
+title: "Unit4_ForLive"
+author: "Grace Lang"
+date: "1/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#Finding roots of polynomials that are difficult to factor
+x2 <- c(1,.5,.6)
+polyroot(x2)
+#THESE ARE THE SAME
+### BUT THIS GIVES YOU MORE ABOUT THE MODEL
+factor.wge(phi=c(-.5,-.6))
+# -0.416667+1.221907i   -0.416667-1.221907i
+#Since there is roots in the characteristic equation that are inside the circle, then the model is stationary. 
+
+# Read in the data
+Walmart = read.csv(file.choose(),header = TRUE)
+
+library(tswge)
+z = gen.sigplusnoise.wge(n = 500,coef = c(1,.5,.6))
+plotts.wge(z)
+parzen.wge(z)
+
+
+a1 <- gen.arma.wge(Walmart$sales, phi =c(-.5,-.6))
+plotts.wge(a1)
+parzen.wge(a1)
+
+
+t = plotts.true.wge(phi =c(-.5,-.6))
+t$aut1
+
+#Answer for For Live
+x = gen.arma.wge(Walmart$sales, phi =c(-.5,-.6))
+plotts.sample.wge(x)
+plotts.true.wge(Walmart$sales, phi=c(-.5,-.6))
+
+t = plotts.true.wge(100,phi=.9)
+t$aut1
+```
+
+
+```{r}
+library(tidyverse)
+# Walmart Store 9 Item 50
+Stor9Item50 = Walmart %>% filter(item == 50 & store == 9)
+plotts.sample.wge(Stor9Item50$sales)
+
+m1 <- gen.arma.wge(Stor9Item50$sales, phi =c(-.967))
+plotts.sample.wge(m1)
+factor.wge(phi=c(-.967))
+
+
+m2 <- gen.arma.wge(Stor9Item50$sales, phi =c(-1.452,.453,.294,-.175,-.237,.154))
+plotts.sample.wge(m2)
+plotts.true.wge(phi=c(-1.452,.453,.294,-.175,-.237,.154))
+factor.wge(phi=c(-1.452,.453,.294,-.175,-.237,.154))
+
+#Model code throws errors
+m3 <- gen.arma.wge(Stor9Item50$sales, phi =c(-1.445,.411,.038,-.170,-.362,.245,.177,-.213))
+m3 <- gen.sigplusnoise.wge(Stor9Item50$sales, phi = c(-1.445,.411,.038,-.170,-.362,.245,.177,-.213))
+plotts.sample.wge(m3)
+factor.wge(phi=c(-1.445,.411,.038,-.170,-.362,.245,.177,-.213))
+
+
+m4 <- gen.arma.wge(Stor9Item50$sales, phi =c(1.384,-.359,-.309,.063,.317,-.140,-.0587,-.199,.2877))
+plotts.sample.wge(m4)
+factor.wge(phi=c(1.384,-.359,-.309,.063,.317,-.140,-.0587,-.199,.2877))
+#plotting a realization along with true autocorrelations and spectral density
+plotts.true.wge(phi=c(1.384, -.359, -.309, .063, .317, -.14, -.0587, -.199, .2877))
+
+
+factor.wge(phi=c(.4295, .1769, .0358, .1454))
+```
+```{r}
+factor.wge(phi=c(.2,-.9))
+
+x2 <- c(-.2,.9)
+polyroot(x2)
+```
+
+```{r}
+#Generate realizations from the phis
+
+# Generating a Non-Stationary Time Series
+
+vara = 1
+
+n = 100
+
+phis = c(1.445,-.411,-.038,.170,.362,-.245,-.177,.213)
+#phis = 1.1
+
+p = length(phis)
+
+initial_values = runif(p,-10,10)
+
+burn_in = 1000
+
+Xt = numeric(burn_in+n)
+
+Xt[1:p] = initial_values*phis
+
+for (i in (p+1):(burn_in+n+p))
+{
+  Xt[i] = Xt[(i-1):(i-p)] * phis + rnorm(1,0,vara)
+}
+
+```
+##########################################
+# Homework
+##########################################
+#plotting & generating AR(p) models
+```{r}
+#(1-.95B)X(t)=a(t)
+plotts.true.wge(n=200,phi=.95)
+
+x=plotts.true.wge(n=200, phi=c(1.5,-.9))
+x
+#since the model has a mean of 10
+x10 = x$data +10
+plotts.wge(x10)
+
+```

@@ -1,0 +1,72 @@
+---
+title: "ForLive_Unit1"
+author: "Grace Lang"
+date: "1/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+df <- read.csv('C://Users/david/OneDrive/Desktop/Time Series/TimeSeries_Spring21/Unit1/AustraliaTemp_1990.csv',header=TRUE)
+
+df$Date <- as.Date(df$Date, format = "%m/%d/%y")
+
+head(df)
+##df$Year <- format(df$Date, "%Y")
+###################################################################
+library(readr)
+df_all <- read_csv('C://Users/david/OneDrive/Desktop/Time Series/TimeSeries_Spring21/Unit1/AustraliaTemp_data.csv',col_names=TRUE,col_types = cols(Date = "D",Temp = "d"))
+
+df_all$Date <- as.Date(df_all$Date, format = "%m/%d/%y")
+
+head(df_all)
+
+
+```
+
+```{r}
+plot(df, type = "linear")
+
+library(ggplot2)
+ggplot()+geom_line(data=df,aes(x=Date,y=Temp))
+
+acf(df)
+```
+# Start of Unit 1 Homework 
+
+
+
+## 1.2 
+Figure 1.1a shows a plot of West Texas intermediate crude oil prices from
+January 2000 to October, 2009, and Figure 1.19b shows monthly average
+temperatures for Pennsylvania for January, 1990 to December, 2009. These
+two data sets in tswge are wtcrude and patemp, respectively. For each of
+these realizations, plot the sample autocorrelations, periodogram, and a
+Parzen window-based spectral density estimate at the truncation point
+. Explain how these plots describe (or fail to describe) the
+behavior in the data
+```{r}
+library(tswge)
+data(wtcrude)
+data(patemp)
+
+plot(wtcrude, type='linear')
+acf(wtcrude)
+#What is the periodogram?
+parzen.wge(wtcrude)
+plotts.sample.wge(wtcrude)
+
+plot(patemp, type='linear')
+acf(patemp)
+parzen.wge(patemp)
+plotts.sample.wge(patemp)
+
+#Explain how these plots describe (or fail to describe) the behavior in the data
+```
+
+## 1.4
+Following are displayed three sets of figures each containing four plots. The
+first set shows four realizations of length n = 100 each generated from a time
+series model. The second set contains four autocorrelation functions based
+on the models used to generate realizations (in random order), and the third
+set displays the four spectral densities. Match each realization with the
+corresponding autocorrelations and spectral density. Explain your answers.

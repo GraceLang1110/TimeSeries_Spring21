@@ -1,0 +1,96 @@
+---
+title: "Unit7_ForLive"
+author: "Grace Lang"
+date: "2/18/2021"
+output: html_document
+---
+
+```{r asynch 7.7}
+library(tswge)
+# Read in the data
+##C:\Users\david\OneDrive\Desktop\Time Series\MSDS-6373-Time-Series\Unit 7
+airplane = read.csv(file.choose(),header = TRUE)
+#Feb '04 - Aug '18
+airplane2 = airplane[2:176,]
+
+
+#Model 1: AR(12) 
+m1 = fore.arma.wge(airplane2$arr_delay,phi=c(0.44,0.02,-.12,.08,0,.02,.06,-.09,.06,.07,.02,.37), n.ahead = 30,lastn=TRUE, limits=FALSE)
+ASE1 = mean(m1$f-airplane2[146:175,16]^2)
+ASE1
+
+#Model 2: AR(12,1)
+m2 = fore.arma.wge(airplane2$arr_delay,phi=c(.34,.07,-.11,.07,01,.02,.06,-.09,.05,.07,.02,.39),theta=-.12, n.ahead = 30,lastn=TRUE, limits=FALSE)
+ASE2 = mean(m2$f-airplane2[146:175,16]^2)
+ASE2
+
+```
+
+```{r 7.9 asynch}
+woodward = fore.aruma.wge(airplane$arr_delay,d=1,s=12,phi=c(-.36,-.05,-.14,-.11,.04,.09,-.02,.02,.17,.03,-.10,-.38),n.ahead = 36,lastn=TRUE, limits=FALSE)
+wood_ase = mean((airplane[(177-36+1):177,16]-woodward$f)^2)
+wood_ase
+
+validation = airplane[142:177,16]
+```
+
+```{r signal plus noise}
+x=gen.sigplusnoise.wge(n=50,b0=10,b1=.2,phi=c(.8,-.6))
+#fore.sigplusnoise.wge(x, linear=TRUE, freq=0, max.p=5,n.ahead=10, lastn=FALSE, plot=TRUE,limits=TRUE)
+xfore=fore.sigplusnoise.wge(x,linear=TRUE,n.ahead=20,lastn = FALSE,limits=FALSE)
+```
+```{r 7.10 asynch}
+#Amazon data, stock price close
+##C:\Users\david\OneDrive\Desktop\Time Series\MSDS-6373-Time-Series\Unit 7
+amazon = read.csv(file.choose(),header = TRUE)
+amazon = amazon[,5]
+
+amazon_fore =fore.sigplusnoise.wge(amazon,linear=TRUE,n.ahead=30,lastn = FALSE,limits=TRUE)
+amazon_fore$f
+amazon_fore$ul
+amazon_fore$ll
+```
+
+
+```{r my time series}
+df <- read.csv('C://Users/david/OneDrive/Desktop/Time Series/TimeSeries_Spring21/Unit1/AustraliaTemp_1990.csv',header=TRUE)
+df <- df[,2]
+
+model = fore.arma.wge(df, n.ahead = 24,lastn=TRUE, limits=FALSE)
+
+```
+
+
+```{r for live question 3}
+library(tidyverse)
+library(knitr)
+
+amtrak <- read.csv(file.choose(),header = TRUE)
+amtrak <- Amtrak[,1:2]
+
+#Model 1: AR(15) 
+m1 = fore.arma.wge(amtrak$Ridership,phi=c(0.5511, 0.1680, -0.0145, 0.0651, 0.1388, -0.2966, 0.1539, 0.1270, -0.1815, 0.0364, 0.1456, 0.6287, -0.3832, -0.0199, -0.1679) , n.ahead = 12,lastn=TRUE, limits=FALSE)
+ASE1 = mean((amtrak$Ridership[148:159]-m1$f)^2)
+ASE1
+
+#Model 2: ARIMA(2,2)
+m2 = fore.arma.wge(amtrak$Ridership,phi=c(-0.02709541,  0.74213105),theta=c(-0.5844596,  0.3836931), n.ahead = 12,lastn=TRUE)
+ASE2 = mean((amtrak$Ridership[148:159]-m2$f)^2)
+ASE2
+
+#Model 3: ARIMA(1,1)
+m3 = fore.arma.wge(amtrak$Ridership,phi=c(0.306943),theta=c(0.7431719), n.ahead = 12,lastn=TRUE, limits=FALSE)
+ASE3 = mean((amtrak$Ridership[148:159]-m3$f)^2)
+ASE3
+
+```
+
+
+```{r live sssion}
+a  = gen.aruma.wge(5000,s = 4,vara = 100, sn = 6)
+plotts.sample.wge(a)
+plot(a[1:4996],a[5:5000], xlab = "X_t-4", ylab = "X_t", main = "Plot of X_t vs. X_t-4")
+cor(a[1:4996],a[5:5000])
+
+
+```

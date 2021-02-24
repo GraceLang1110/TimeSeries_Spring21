@@ -1,0 +1,46 @@
+---
+title: "ForLive_Unit2"
+author: "Grace Lang"
+date: "1/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tswge)
+
+data(llynx)
+parzen.wge(llynx)
+plotts.sample.wge(llynx)
+```
+```{r}
+df <- read.csv('C://Users/david/OneDrive/Desktop/Time Series/TimeSeries_Spring21/Unit1/AustraliaTemp_1990.csv',header=TRUE)
+
+df2 <- ts(data = df, start =c(1990,1), end=c(1990,365), frequency =1)
+df2 <- ts(data = df,  frequency =1)
+head(df2)
+parzen.wge(df2)
+plotts.sample.wge(df2)
+
+data(freeze)
+parzen.wge(freeze)
+plotts.sample.wge(freeze)
+```
+
+# Building out white noise
+```{r}
+x= gen.arma.wge(1000, phi = 0, sn = 7)
+acf(x)
+parzen.wge(x)
+
+y= gen.arma.wge(1000, phi = 0, sn = 12)
+acf(y)
+parzen.wge(y)
+```
+
+# Homework Problems
+```{r}
+#1.5
+data("fig1.21a")
+parzen.wge(fig1.21a)
+
+```

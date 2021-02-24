@@ -1,0 +1,123 @@
+---
+title: "Unit5_ForLive"
+author: "Grace Lang"
+date: "2/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tswge)
+
+factor.wge(phi=c(-.1,.3))
+
+#Asynch concept check
+factor.wge(phi=c(-.1,-.82,.16))
+factor.wge(phi=c(1.95,-1.9))
+
+#verifying the autocorrelations using tswge
+plotts.true.wge(theta =c(.5))
+
+```
+```{r}
+aic.wge(jetA$Price,p = 1, q = 1)$value
+aic5.wge(jetA$Price)
+
+
+#	psi-weights	for	simple	MA(1)	model	X(t)=(1-.8B)a(t)
+psi.weights.wge(theta=.8,lag.max=5)
+#	psi-weights	for	simple	AR(1)	model	(1-.8B)X(t)=a(t)
+psi.weights.wge(phi=.8,lag.max=5)		#note	that	psi(j)=.8j
+#	psi-weights	for	ARMA(2,1)	model	(1-1.2B+.6B2)X(t)=(1-.5B)a(t)
+psi.weights.wge(phi=c(1.2,-.6),theta=c(.5),lag.max=5)
+
+
+psi.weights.wge(phi=c(1.95,-1.9),lag.max=5)
+```
+
+# Walmart Data
+```{r}
+# Read in the data
+Walmart = read.csv(file.choose(),header = TRUE)
+library(tidyverse)
+# Walmart Store 9 Item 50
+Stor9Item50 = Walmart %>% filter(item == 50 & store == 9)
+plotts.sample.wge(Stor9Item50$sales)
+
+x<- aic5.wge(Stor9Item50$sales)
+
+x
+
+
+Stor8Item1 = Walmart %>% filter(item == 1 & store == 8)
+x<- aic5.wge(Stor8Item1$sales)
+
+x
+```
+
+```{r}
+#Generate a realization from an ARMA model, pick the P&q
+gen.arma.wge(n=100,phi=.5,theta=-.62)
+
+plotts.true.wge(n=100,phi=c(.5,-.7,.9,-.22))
+
+#Include spectral density plot
+plotts.true.wge(n=100,phi=.5,theta=-.62)
+
+psi.weights.wge(theta = c(.8,-.5), lag.max = 5)
+```
+
+```{r}
+#SWADelay.csv
+flight = read.csv(file.choose(),header = TRUE)
+
+aic5.wge(flight$arr_cancelled)
+```
+
+###################################
+# Homework
+###################################
+
+```{r}
+y= plotts.true.wge(n=200,theta=c(.95,-.9,.855))
+y
+#plotting the realization with the mean of 25 
+
+y25 = mean(y$data)
+plotts.wge(y25)
+
+factor.wge(phi=c(.95,-.9,.855))
+
+```
+
+```{r 3.6}
+factor.wge(phi=c(1,-.26,-.64,.576))
+factor.wge(phi=c(2.4,-2.18,.72))
+```
+
+```{r 3.7 pg 173}
+#AR4 - stationary
+factor.wge(phi=c(.1,-.5,-.08,.24))
+#ARMA(2,1) - stationary, not invertible
+factor.wge(phi=c(1.3,-.4)) #AR2
+factor.wge(phi=1.9) #MA1
+#ARMA(1,2) - non-stationary, invertible
+factor.wge(phi=1.9) #AR1
+factor.wge(phi=c(1.3,-.4)) #MA2
+#ARMA(2,1) - stationary, invertible
+factor.wge(phi=c(2.95,-3.87,2.82,-.92)) #AR2
+factor.wge(phi=.9) #MA1
+#ARMA(3,2) -stationary, invertible
+factor.wge(phi=c(1,.49,-.9,.369)) #AR3
+factor.wge(phi=c(-1,-1,-.75)) #MA2
+```
+
+
+```{r 3.8 ph 174}
+#MA2 - has roots inside the unit circle = not invertible
+factor.wge(phi=c(.5,5))
+true.arma.aut.wge(phi=c(.5,5))
+plotts.true.wge(n=200,theta=c(.5,5))
+
+factor.wge(phi=c(2,-1.5))
+true.arma.aut.wge(phi=c(2,-1.5))
+```
