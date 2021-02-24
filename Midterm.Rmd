@@ -1,0 +1,105 @@
+---
+title: "Midterm"
+author: "Grace Lang"
+date: "2/23/2021"
+output: html_document
+---
+# Unit 1: Basic Plotting 
+```{r setup, include=FALSE}
+library(tswge)
+data(wtcrude)
+data(patemp)
+
+plot(wtcrude, type='linear')
+acf(wtcrude)
+#What is the periodogram?
+parzen.wge(wtcrude)
+plotts.sample.wge(wtcrude)
+
+plot(patemp, type='linear')
+acf(patemp)
+parzen.wge(patemp)
+plotts.sample.wge(patemp)
+```
+
+# Unit 2: Building out white noise
+```{r}
+x= gen.arma.wge(1000, phi = 0, sn = 7)
+acf(x)
+parzen.wge(x)
+```
+
+#Unit 3: Filters
+```{r}
+library(tidyverse)
+
+#5 point moving average
+a = stats::filter(ts(df),rep(1,5))/5
+plot(a,type = "l")
+parzen.wge(na.omit(a))
+plotts.sample.wge(a)
+
+#51 point moving average
+b = stats::filter(ts(df),rep(1,51))/51
+plot(b,type = "l")
+parzen.wge(na.omit(b))
+plotts.sample.wge(b)
+
+#low pass
+ma = stage::filter(a$x,rep(1,5))/5
+plot(ma)
+
+butterworth.wge(a$x, order = 3, type = "low", cutoff=.2)
+#the order determines how quick the frequency cuts off at the designated cutoff
+
+#Difference filter
+dif = diff(x,lag = 1)
+plot(dif,type = "l")
+parzen.wge(dif)
+
+xx = butterworth.wge(x,order = 1, type = "low", cutoff = .2)
+par(mfrow = c(1,1))
+parzen.wge(xx$x.filt,trunc = 100)
+
+xx = butterworth.wge(x,type = "pass", cutoff = c(.3,.45))
+par(mfrow = c(1,1))
+parzen.wge(xx$x.filt,trunc = 100)
+```
+
+# Unit 5: 
+```{r}
+#	psi-weights	for	simple	MA(1)	model	X(t)=(1-.8B)a(t)
+psi.weights.wge(theta=.8,lag.max=5)
+#	psi-weights	for	simple	AR(1)	model	(1-.8B)X(t)=a(t)
+psi.weights.wge(phi=.8,lag.max=5)		#note	that	psi(j)=.8j
+#	psi-weights	for	ARMA(2,1)	model	(1-1.2B+.6B2)X(t)=(1-.5B)a(t)
+psi.weights.wge(phi=c(1.2,-.6),theta=c(.5),lag.max=5)
+
+#Generate a realization from an ARMA model, pick the P&q
+gen.arma.wge(n=100,phi=.5,theta=-.62)
+plotts.true.wge(n=100,phi=c(.5,-.7,.9,-.22))
+
+#Include spectral density plot
+plotts.true.wge(n=100,phi=.5,theta=-.62)
+psi.weights.wge(theta = c(.8,-.5), lag.max = 5)
+```
+
+# Unit 6: removing seasonality
+```{r}
+#6.6
+x = gen.aruma.wge(n=500, phi=c(.6,-.8), theta=c(.3,-.7), s=7,sn=37)
+Dif = artrans.wge(x,c(rep(0,11),1))
+aic5.wge(Dif)
+```
+
+# Unit 7: Signal plus noise
+```{r}
+#forecasting signal plus noise models
+x=gen.sigplusnoise.wge(n=50,b0=10,b1=.2,phi=c(.8,-.6))
+#fore.sigplusnoise.wge(x, linear=TRUE, freq=0, max.p=5,n.ahead=10, lastn=FALSE, plot=TRUE,limits=TRUE)
+xfore=fore.sigplusnoise.wge(x,linear=TRUE,n.ahead=20,lastn = FALSE,limits=FALSE)
+````
+
+
+
+
